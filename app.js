@@ -11,62 +11,103 @@ const winningCombinations = [
     [2, 4, 6]
 ]
 
-let currentGameIndex = 0;
-let currentPlayer = "X";
-let playerXGame = [];
-let playerOGame = [];
+const datasGame = {
+    currentGameIndex: 0,
+    currentPlayer: "X",
+    playerXGame: [],
+    playerOGame: []
+}
+
+// let datasGame.currentGameIndex = 0;
+// let datasGame.currentPlayer = "X";
+// let datasGame.playerXGame = [];
+// let datasGame.playerOGame = [];
 
 function pushScoreIntoGameArray(squarreNumber) {
-    currentPlayer === "X" ? playerXGame.push(squarreNumber) : playerOGame.push(squarreNumber);
+    datasGame.currentPlayer === "X" ? datasGame.playerXGame.push(squarreNumber) : datasGame.playerOGame.push(squarreNumber);
 }
 
 function switchPlayer() {
-    currentPlayer === "X" ? currentPlayer = "O" : currentPlayer = "X"
+    datasGame.currentPlayer === "X" ? datasGame.currentPlayer = "O" : datasGame.currentPlayer = "X"
 }
 
-const messageContainer = document.querySelector('.message-container')
-const messageDisplay = document.querySelector('.message-display')
-function messageDisplayer(message) {
-    messageDisplay.textContent = message;
+const messageDisplayOne = document.querySelector('.message-display-1');
+const messageDisplayTwo = document.querySelector('.message-display-2');
+function messageDisplayer(messageOne, messageTwo) {
+    if (messageOne) {
+        messageDisplayOne.textContent = messageOne;
+    }
+    if (messageTwo) {
+        messageDisplayTwo.textContent = messageTwo;
+    }
 }
+
+function victoryChecker(playerMarker) {
+    let hasVictory = false;
+    if (playerMarker) {
+        for (let i = 0; i < winningCombinations.length; i++) {
+            if (winningCombinations[i].every((el) => playerMarker.includes(el.toString()))) {
+                 hasVictory = true;
+                 return hasVictory;
+            }
+        }
+    }
+    return hasVictory;
+}
+
+function victoryDisplayer() {
+    console.log("victory")
+    document.querySelectorAll('.marker').forEach((mark) => {
+        mark.classList.add('clicked');
+        messageDisplayer(`${datasGame.currentPlayer} won!`, 'Press space to restart');
+        datasGame.currentGameIndex = 0;
+        datasGame.playerXGame = [];
+        datasGame.playerOGame = [];
+    });
+    switchPlayer();
+}
+
 
 const grid = document.querySelector('.grid');
 
 function gridHandler(e) {
-
     if (e.target.classList.contains("marker")) {
         const squarreElement = e.target;
-        squarreElement.textContent = currentPlayer;
+        squarreElement.textContent = datasGame.currentPlayer;
         squarreElement.classList.add('clicked')
         const squarreNumber = squarreElement.dataset.number;
-        // console.log(squarreElement, squarreNumber);
-        console.log(currentPlayer)
 
         pushScoreIntoGameArray(squarreNumber);
-        switchPlayer();
-        messageDisplayer(`${currentPlayer}'s turn`)
-        currentGameIndex++;
-
-        if (currentGameIndex == 9) {
-            messageDisplayer("Press space to restart");
-            console.log(playerXGame, playerOGame)
+        if (victoryChecker(datasGame.playerXGame) === true || victoryChecker(datasGame.playerOGame) === true) {
+            return victoryDisplayer();
+        } else {
+            switchPlayer();
+            messageDisplayer(`${datasGame.currentPlayer}'s turn`)
+            datasGame.currentGameIndex++;
+            if (datasGame.currentGameIndex == 9) {
+                messageDisplayer("Press space to restart");
+            }
         }
     }
 }
 
 grid.addEventListener('click', gridHandler);
-window.addEventListener('keydown', (e) => {
+
+// Restart
+// ============================================================
+function restartGame(e) {
     if (e.key === ' ') {
         document.querySelectorAll('.marker').forEach((mark) => {
             mark.textContent = "";
             mark.classList.remove('clicked');
-            messageDisplayer(`${currentPlayer}'s turn`);
-            currentGameIndex = 0;
-            playerXGame = [];
-            playerOGame = [];
+            messageDisplayer(`${datasGame.currentPlayer}'s turn`);
+            datasGame.currentGameIndex = 0;
+            datasGame.playerXGame = [];
+            datasGame.playerOGame = [];
         });
     }
-});
+}
+window.addEventListener('keydown', restartGame);
 
 
 

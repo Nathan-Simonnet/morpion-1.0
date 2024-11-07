@@ -17,6 +17,9 @@
 <body>
   <h1>Tic tac toe</h1>
   <div class="grid">
+    <div class="square" data-number="0" id="0">
+      <p data-number="0" class="marker"></p>
+    </div>
     <div class="square" data-number="1" id="1">
       <p data-number="1" class="marker"></p>
     </div>
@@ -41,12 +44,10 @@
     <div class="square" data-number="8" id="8">
       <p data-number="8" class="marker"></p>
     </div>
-    <div class="square" data-number="9" id="9">
-      <p data-number="9" class="marker"></p>
-    </div>
   </div>
   <div class="message-container">
-    <p class="message-display">Au tour de X</p>
+    <p class="message-display-1">X's turn</p>
+    <p class="message-display-2">X's turn</p>
   </div>
 
   <script src="app.js"></script>
